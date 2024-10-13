@@ -1,4 +1,7 @@
+'use client';
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { FaBug } from "react-icons/fa";
 
@@ -7,6 +10,8 @@ const NavBar = () => {
     { label: "Dashboard", href: "/" },
     { label: "Issues", href: "/issues" },
   ];
+
+  const currentPath = usePathname();
   return (
     <nav className="flex space-x-5 border-b p-5 items-center">
       <Link href="/">
@@ -17,9 +22,10 @@ const NavBar = () => {
           <Link
             href={link.href}
             key={link.label}
-            className="text-zinc-400 hover:text-zinc-800 transition-colors text-xl"
+            className={
+                `${link.href === currentPath ? "text-zinc-800" : "text-zinc-400"}
+              transition-colors text-xl`}
           >
-            {" "}
             {link.label}
           </Link>
         ))}
