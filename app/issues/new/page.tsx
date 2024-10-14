@@ -9,27 +9,34 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import {zodResolver} from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/ValidationSchemas";
-import {z} from 'zod';
+import { z } from "zod";
 import ErrorMessage from "@/components/ErrorMessage";
+import Spinner from "@/components/ui/Spinner";
+import { useState } from "react";
 
-type IssueForm =z.infer<typeof createIssueSchema>;
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssuePage = () => {
-  const { register, control, handleSubmit, formState:{errors} } = useForm<IssueForm>(
-    {
-      resolver: zodResolver(createIssueSchema)
-    }
-  );
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+  });
   const router = useRouter();
   const { toast } = useToast();
-
+  const [isSubmitting, setSubmitting] = useState(false);
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setSubmitting(true);
       await axios.post("/api/issues", data);
       router.push("/issues");
     } catch (error) {
+      setSubmitting(false);
       const errorMessage = axios.isAxiosError(error)
         ? error.response?.data?.message ||
           "Hmmm...something does'nt seem right! Please try after sometime."
@@ -54,7 +61,9 @@ const NewIssuePage = () => {
         )}
       />
       <ErrorMessage>{errors.description?.message}</ErrorMessage>
-      <Button type="submit">Submit Issue</Button>
+      <Button disabled={isSubmitting} type="submit">
+        Submit Issue {isSubmitting && <Spinner />}
+      </Button>
       <Toaster />
     </form>
   );
