@@ -2,15 +2,17 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import React from 'react'
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+
+
 
 const NewIssuePage = () => {
   return (
     <div className='max-w-xl p-5 space-y-3'>
         <h2 className='text-xl font-semibold'>Create New Issue</h2>
         <Input placeholder='Title'/>
-        <Textarea placeholder='Description' />
+        <SimpleMDE placeholder='Description' />
         <Button>Submit Issue</Button>
       
     </div>
