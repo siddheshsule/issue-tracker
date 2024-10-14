@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import {zodResolver} from "@hookform/resolvers/zod"
 import { createIssueSchema } from "@/app/ValidationSchemas";
 import {z} from 'zod';
-import { Label } from "@radix-ui/react-label";
+import ErrorMessage from "@/components/ErrorMessage";
 
 type IssueForm =z.infer<typeof createIssueSchema>;
 
@@ -45,7 +45,7 @@ const NewIssuePage = () => {
     <form className="max-w-xl p-5 space-y-3" onSubmit={onSubmit}>
       <h2 className="text-xl font-semibold">Create New Issue</h2>
       <Input placeholder="Title" {...register("title")} />
-      {errors.title && <Label className="text-red-700">{errors.title.message}</Label>}
+      <ErrorMessage>{errors.title?.message}</ErrorMessage>
       <Controller
         name="description"
         control={control}
@@ -53,7 +53,7 @@ const NewIssuePage = () => {
           <SimpleMDE {...field} placeholder="Description" />
         )}
       />
-      <p>{errors.description && <Label className="text-red-700">{errors.description.message}</Label>}</p>
+      <ErrorMessage>{errors.description?.message}</ErrorMessage>
       <Button type="submit">Submit Issue</Button>
       <Toaster />
     </form>
