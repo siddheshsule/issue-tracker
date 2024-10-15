@@ -11,9 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IssueStatusBadge from "@/components/IssueStatusBadge";
+import delay from 'delay';
 
 const IssuesPage = async () => {
   const issues = await prisma.issue.findMany();
+  await delay(2000);
+
   return (
     <div className="mt-5 ml-2">
       <div className="mb-3">
@@ -25,9 +28,9 @@ const IssuesPage = async () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Title</TableHead>
-            <TableHead className="hidden md:table-cell">Status</TableHead>
-            <TableHead className="hidden md:table-cell">Date</TableHead>
+            <TableHead className="w-[300px] text-xl">Title</TableHead>
+            <TableHead className="w-[300px] text-xl hidden md:table-cell">Status</TableHead>
+            <TableHead className="w-[300px] text-xl hidden md:table-cell">Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
