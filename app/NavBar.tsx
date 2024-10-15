@@ -13,9 +13,9 @@ const NavBar = () => {
 
   const currentPath = usePathname();
   return (
-    <nav className="flex space-x-5 border-b p-5 items-center">
+    <nav className="flex space-x-5 border-b p-5 items-center bg-gradient-to-r from-black to-blue-500 ">
       <Link href="/">
-        <FaBug className="size-10" />
+        <FaBug className="size-10 text-red-600" />
       </Link>
       <ul className="flex space-x-5">
         {links.map((link) => (
@@ -23,8 +23,8 @@ const NavBar = () => {
             href={link.href}
             key={link.label}
             className={
-                `${link.href === currentPath ? "text-zinc-800" : "text-zinc-400"}
-              transition-colors text-xl`}
+                `${link.href === currentPath ? "text-white" : "text-zinc-400"}
+              transition-colors text-xl hover:text-white`}
           >
             {link.label}
           </Link>
