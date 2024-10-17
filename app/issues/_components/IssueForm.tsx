@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -10,14 +9,18 @@ import { useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createIssueSchema } from "@/app/ValidationSchemas";
+import { issueSchema } from "@/app/ValidationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/components/ErrorMessage";
 import Spinner from "@/components/ui/Spinner";
 import { useState } from "react";
 import { Issue } from "@prisma/client";
+import dynamic from "next/dynamic";
 
-type IssueFormData = z.infer<typeof createIssueSchema>;
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+}) as typeof import("react-simplemde-editor").default;
+type IssueFormData = z.infer<typeof issueSchema>;
 
 const IssueForm = ({issue}: {issue?:Issue}) => {
   const {
@@ -26,7 +29,7 @@ const IssueForm = ({issue}: {issue?:Issue}) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IssueFormData>({
-    resolver: zodResolver(createIssueSchema),
+    resolver: zodResolver(issueSchema),
   });
   const router = useRouter();
   const { toast } = useToast();
@@ -34,7 +37,10 @@ const IssueForm = ({issue}: {issue?:Issue}) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
-      await axios.post("/api/issues", data);
+      if(issue) 
+        await axios.patch("/api/issues" + (issue.id).toString, data);
+      else
+        await axios.post("/api/issues", data);
       router.push("/issues");
     } catch (error) {
       setSubmitting(false);
@@ -64,7 +70,7 @@ const IssueForm = ({issue}: {issue?:Issue}) => {
       />
       <ErrorMessage>{errors.description?.message}</ErrorMessage>
       <Button disabled={isSubmitting} type="submit">
-        Submit Issue {isSubmitting && <Spinner />}
+        {issue ? "Update Issue" : "Submit Issue"} {" "} {isSubmitting && <Spinner />}
       </Button>
       <Toaster />
     </form>
