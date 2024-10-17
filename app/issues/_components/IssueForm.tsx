@@ -16,10 +16,8 @@ import Spinner from "@/components/ui/Spinner";
 import { useState } from "react";
 import { Issue } from "@prisma/client";
 import dynamic from "next/dynamic";
+import SimpleMDE from 'react-simplemde-editor';
 
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
-  ssr: false,
-}) as typeof import("react-simplemde-editor").default;
 type IssueFormData = z.infer<typeof issueSchema>;
 
 const IssueForm = ({issue}: {issue?:Issue}) => {
@@ -32,16 +30,19 @@ const IssueForm = ({issue}: {issue?:Issue}) => {
     resolver: zodResolver(issueSchema),
   });
   const router = useRouter();
+  const [error, setError] = useState('');
   const { toast } = useToast();
   const [isSubmitting, setSubmitting] = useState(false);
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
       if(issue) 
-        await axios.patch("/api/issues" + (issue.id).toString, data);
+        await axios.patch("/api/issues/" + issue.id, data);
       else
         await axios.post("/api/issues", data);
       router.push("/issues");
+      router.refresh();
     } catch (error) {
       setSubmitting(false);
       const errorMessage = axios.isAxiosError(error)
@@ -65,12 +66,13 @@ const IssueForm = ({issue}: {issue?:Issue}) => {
         control={control}
         defaultValue={issue?.description}
         render={({ field }) => (
-          <SimpleMDE {...field} placeholder="Description" />
+          <SimpleMDE  placeholder="Description" {...field} />
         )}
       />
       <ErrorMessage>{errors.description?.message}</ErrorMessage>
       <Button disabled={isSubmitting} type="submit">
-        {issue ? "Update Issue" : "Submit Issue"} {" "} {isSubmitting && <Spinner />}
+        {issue ? "Update Issue" : "Submit Issue"} {' '} 
+        {isSubmitting && <Spinner />}
       </Button>
       <Toaster />
     </form>
